@@ -240,12 +240,15 @@ class RWKV(nn.Module):
 
         self.ln_out = nn.LayerNorm(self.args.n_embd)
         self.head = nn.Linear(self.args.n_embd, self.args.vocab_size, bias=False)
-        model_weights = {
-            k: v.to(dtype=self.args.dtype) for k, v in model_weights.items()
-        }
+        # model_weights = {
+        #     k: v.to(dtype=self.args.dtype) for k, v in model_weights.items()
+        # }
         # 加载至系统
         self.load_state_dict(model_weights)
         del model_weights
+        
+        for p in self.parameters():
+            p.data = p.data.to(dtype=self.args.dtype)
         gc.collect()
         torch.cuda.empty_cache()
 
